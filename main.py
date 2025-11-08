@@ -9,11 +9,32 @@ from app.operations import add, subtract, multiply, divide  # Ensure correct imp
 import uvicorn
 import logging
 
+
+# -------------------------
 # Setup logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# -------------------------
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
+logger = logging.getLogger("app")
+
 
 app = FastAPI()
+
+import time
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start = time.time()
+    logger.info(f"REQ {request.method} {request.url.path}")
+    try:
+        response = await call_next(request)
+    finally:
+        duration_ms = int((time.time() - start) * 1000)
+        logger.info(f"RES {request.method} {request.url.path} -> "
+                    f"{getattr(response, 'status_code', '?')} ({duration_ms} ms)")
+    return response
 
 # Setup templates directory
 templates = Jinja2Templates(directory="templates")
@@ -23,7 +44,7 @@ class OperationRequest(BaseModel):
     a: float = Field(..., description="The first number")
     b: float = Field(..., description="The second number")
 
-    @field_validator('a', 'b')  # Correct decorator for Pydantic 1.x
+    @field_validator('a', 'b')
     def validate_numbers(cls, value):
         if not isinstance(value, (int, float)):
             raise ValueError('Both a and b must be numbers.')
