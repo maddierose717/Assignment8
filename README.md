@@ -262,3 +262,9 @@ Then submit the GitHub repository link as instructed.
 - [Python Downloads](https://www.python.org/downloads/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop/)
 - [GitHub SSH Setup Guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh)
+
+Note on E2E Tests
+
+I couldn’t run the end-to-end tests on my computer because Playwright needs admin (sudo) access to install certain browser dependencies.
+To fix this, I added code to skip those tests locally and instead run them in GitHub Actions, where all permissions are available.
+This ensures all tests pass in CI, even if my local environment is restricted.
