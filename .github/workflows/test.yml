@@ -72,8 +72,8 @@ jobs:
         with:
           push: true
           tags: |
-  maddierose717/assignment8:latest
-  maddierose717/assignment8:${{ github.sha }}
+            maddierose717/assignment8:latest
+            maddierose717/assignment8:${{ github.sha }}
           platforms: linux/amd64,linux/arm64
           cache-from: type=registry,ref=maddierose717/assignment8:cache
           cache-to: type=inline,mode=max
